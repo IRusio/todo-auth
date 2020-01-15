@@ -4,6 +4,7 @@
 
 @using System.Collections
 @using System.Net
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
@@ -27,10 +28,12 @@
 
 
         @{
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
             string todoListJson;
             using (var client = new WebClient())
-            { 
-                todoListJson = new WebClient().DownloadString("https://localhost:5001/api/todo/all");
+            {
+                var connectionStr = "https://localhost:5001/api/todo/all/" + user;
+                todoListJson = new WebClient().DownloadString(connectionStr);
             }
 
             var todoList = JsonConvert.DeserializeObject<List<TodoModel>>(todoListJson);
@@ -47,8 +50,8 @@
 
 
                 <div class="todo-object-button-section">
-                    <button type="button" class="btn btn-warning" onclick="editTaskButton(@todoElement.Id)">Edit</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteTaskButton(@todoElement.Id)">Delete</button>
+                    <button type="button" class="btn btn-warning" onclick="editTaskButton(@todoElement.Id, '@user')">Edit</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteTaskButton(@todoElement.Id,'@user')">Delete</button>
                 </div>
                 <div class="todo-object-task-number-section">
                     @todoElement.Id

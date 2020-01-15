@@ -14,7 +14,6 @@ using Todo.Models;
 
 namespace Todo.Views
 {
-    [ValidateAntiForgeryToken]
     [ApiController]
     [Route("/api/todo/")]
     public class TodoModelsController : Controller
@@ -27,30 +26,31 @@ namespace Todo.Views
         }
 
         [HttpGet]
-        [Route("all/")]
-        public JsonResult GetAllTodo()
+        [Route("all/{id}")]
+        public JsonResult GetAllTodo(string id)
         {
-            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var result = _context.TodoModel.Where(model => model.TaskOwner == user)?.ToList();
+            var result = _context.TodoModel.Where(model => model.TaskOwner == id).ToList();
             if (result == null)
                 return Json(new List<TodoModel>());
             return Json(result);
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public JsonResult GetTodoViaId(int id)
+        [Route("{id}/{userId}")]
+        public JsonResult GetTodoViaId(int id, string userId)
         {
-            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Json(_context.TodoModel.Where(model => model.Id == id && model.TaskOwner == user)?.ToList());
+            var user = userId;
+            return Json(_context.TodoModel.Where(model => model.Id == id && model.TaskOwner == userId)?.First());
         }
 
         [HttpPost]
-        [Route("add")]
-        public async Task<HttpStatusCode> AddToList([FromBody] PreTodoModel preTodoModel)
+        [Route("add/{userId}")]
+        public async Task<HttpStatusCode> AddToList([FromBody] PreTodoModel preTodoModel, string userId)
         {
-            var todoModel = preTodoModel as TodoModel;
-            todoModel.TaskOwner = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return HttpStatusCode.BadRequest;
+
+            TodoModel todoModel = new TodoModel(preTodoModel) {TaskOwner = userId};
             if (ModelState.IsValid)
             {
                 _context.Add(todoModel);
@@ -62,13 +62,15 @@ namespace Todo.Views
         }
 
         [HttpDelete]
-        [Route("remove/{id}")]
-        public async Task<HttpStatusCode> RemoveTaskFromList(int id)
+        [Route("remove/{id}/{userId}")]
+        public async Task<HttpStatusCode> RemoveTaskFromList(int id, string userId)
         {
 
-            var TaskOwner= User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var TaskOwner = userId;
             
-            var todoModel = await _context.TodoModel.FindAsync(id, TaskOwner);
+            var todoModel = await _context.TodoModel.FindAsync(id);
+            if (todoModel.TaskOwner != userId)
+                return HttpStatusCode.BadRequest;
             _context.TodoModel.Remove(todoModel);
             await _context.SaveChangesAsync();
             return HttpStatusCode.Accepted;
@@ -76,11 +78,11 @@ namespace Todo.Views
 
 
         [HttpPut]
-        [Route("update/{id}")]
-        public async Task<HttpStatusCode> UpdateTask(int id, [FromBody] PreTodoModel data)
+        [Route("update/{id}/{userId}")]
+        public async Task<HttpStatusCode> UpdateTask(int id, [FromBody] PreTodoModel data, string userId)
         {
-            var TaskOwner = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var todoModel = await _context.TodoModel.FindAsync(id, TaskOwner);
+            var TaskOwner = userId;
+            var todoModel = await _context.TodoModel.FindAsync(id);
 
             if (data.TaskContent != string.Empty)
                 todoModel.TaskContent = data.TaskContent;

@@ -4,17 +4,17 @@
 // Write your JavaScript code.
 
 function addTaskButton() {
-    reload('Home/Add', 'add task');
+    reload('/Home/Add', 'add task');
 }
 
-function deleteTaskButton(id) {
-    reloadAndRefresh({ url: 'api/todo/remove/' + id, actionType: 'Delete' });
+function deleteTaskButton(id, userId) {
+    reloadAndRefresh({ url: 'api/todo/remove/' + id + '/' + userId, actionType: 'Delete' });
     sleepFor(100);
     location.reload();
 }
 
-function editTaskButton(id) {
-    reload('Home/Update/' + id, 'update task');
+function editTaskButton(id, userId) {
+    reload('/Home/Update/' + id + '/' + userId, 'update task');
 }
 
 function SendForm(parameters) {
@@ -23,10 +23,16 @@ function SendForm(parameters) {
     console.log(data);
     console.log(JSON.stringify(data));
     var result = false;
-    if (parameters.id == null)
-        result = reloadAndRefresh({ url: '/api/todo/add', actionType: "post", data: data });
+    if (parameters.id == null) {
+        var addUrl = '/api/todo/add/' + parameters.userId;
+        result = reloadAndRefresh({ url: addUrl, actionType: "post", data: data });
+    }
     else
-        result = reloadAndRefresh({ url: '/api/todo/update/' + parameters.id, actionType: 'PUT', data: data });
+        result = reloadAndRefresh({
+            url: '/api/todo/update/' + parameters.id + '/' + parameters.userId,
+            actionType: 'PUT',
+            data: data
+        });
 
     sleepFor(100);
     location.reload();

@@ -1,4 +1,5 @@
-﻿@model object
+﻿@using System.Security.Claims
+@model object
 
 @{
     ViewBag.Title = "Add";
@@ -11,18 +12,22 @@
     }
 </script>
 
+@{
+    var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
 <div id="popout-background">
     <div id="popout-content">
         <span class="close" onclick="closePopoutWindow()">&times;</span>
         <div class="popout-content-data">
-            <form id="formToSend" onsubmit="return SendForm({})">
+            <form id="formToSend" onsubmit="return SendForm({userId: '@user'})">
                 <div class="form-group">
                     <label for="taskHeader">Task Header</label>
                     <input name="taskHeader" type="text" class="form-control" id="taskHeader" placeholder="Enter Task Header" />
                 </div>
                 <div class="form-group">
                     <label for="taskContent">Task Content</label>
-                    <input name="taskContext" type="text" class="form-control" id="taskContent" placeholder="Enter Task Content" />
+                    <input name="taskContent" type="text" class="form-control" id="taskContent" placeholder="Enter Task Content" />
                 </div>
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>

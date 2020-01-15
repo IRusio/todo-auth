@@ -25,7 +25,6 @@ namespace Todo.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var a = await HttpContext.GetTokenAsync(IdentityConstants.ApplicationScheme, "access_token");
             return View();
         }
 
@@ -34,16 +33,18 @@ namespace Todo.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult Add()
         {
             return PartialView();
         }
 
-        [Authorize]
-        public async Task<IActionResult> Update(int id)
+
+
+        [HttpGet]
+        [Route("Home/Update/{id}/{userId}")]
+        public IActionResult Update(int id, string userId)
         {
-            return PartialView(await GetElementFromId(id));
+            return PartialView(GetElementFromId(id, userId));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -52,9 +53,9 @@ namespace Todo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async static Task<TodoModel> GetElementFromId(int id)
+        private static TodoModel GetElementFromId(int id, string userId)
         {
-            var todoListJson = new WebClient().DownloadString($"#/api/todo/{id}");
+            var todoListJson = new WebClient().DownloadString($"https://localhost:5001/api/todo/{id}/{userId}");
 
             return JsonConvert.DeserializeObject<TodoModel>(todoListJson);
         }

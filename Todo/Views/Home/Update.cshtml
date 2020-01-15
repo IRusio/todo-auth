@@ -1,4 +1,5 @@
-﻿@model TodoModel
+﻿@using System.Security.Claims
+@model TodoModel
 
 @{
     ViewBag.Title = "title";
@@ -15,14 +16,14 @@
     <div id="popout-content">
         <span class="close" onclick="closePopoutWindow()">&times;</span>
         <div class="popout-content-data">
-            <form id="formToSend" onsubmit="return SendForm({id: @Model.Id})">
+            <form id="formToSend" onsubmit="return SendForm({id: @Model.Id, userId:  '@User.FindFirstValue(ClaimTypes.NameIdentifier)'})">
                 <div class="form-group">
                     <label for="taskHeader">Task Header</label>
-                    <input name="taskHeader" type="text" class="form-control" id="taskHeader" placeholder="Enter Task Header" value="@Model.TaskHeader" />
+                    <input name="taskHeader" type="text" class="form-control" id="TaskHeader" placeholder="Enter Task Header" value="@Model.TaskHeader" />
                 </div>
                 <div class="form-group">
                     <label for="taskContent">Task Content</label>
-                    <input name="taskContext" type="text" class="form-control" id="taskContent" placeholder="Enter Task Content" value="@Model.TaskContent" />
+                    <input name="taskContent" type="text" class="form-control" id="TaskContent" placeholder="Enter Task Content" value="@Model.TaskContent" />
                 </div>
                 <button type="submit" class="btn btn-primary">Send</button>
             </form>

@@ -7,14 +7,27 @@ namespace Todo.Models
 {
     public class TodoModel : PreTodoModel
     {
+
+        public TodoModel(string taskHeader, string taskContent, int id, string taskOwner)
+        {
+            Id = id;
+            TaskOwner = taskOwner;
+            TaskHeader = taskHeader;
+            TaskContent = taskContent;
+        }
+
+        public TodoModel(PreTodoModel model)
+        {
+            this.TaskHeader = model.TaskHeader;
+            this.TaskContent = model.TaskContent;
+        }
+
+        public TodoModel()
+        {
+        }
+
         public int Id { get; set; }
 
         public string TaskOwner { get; set; }
-    }
-
-    public class PreTodoModel
-    {
-        public string TaskHeader { get; set; }
-        public string TaskContent { get; set; }
     }
 }
