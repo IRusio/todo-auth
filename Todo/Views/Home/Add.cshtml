@@ -1,0 +1,31 @@
+﻿@model object
+
+@{
+    ViewBag.Title = "Add";
+}
+
+<script>
+    window.onclick = function (ev) {
+        if(ev.target === $('#popout-background')[0])
+            closePopoutWindow();
+    }
+</script>
+
+<div id="popout-background">
+    <div id="popout-content">
+        <span class="close" onclick="closePopoutWindow()">&times;</span>
+        <div class="popout-content-data">
+            <form id="formToSend" onsubmit="return SendForm({})">
+                <div class="form-group">
+                    <label for="taskHeader">Task Header</label>
+                    <input name="taskHeader" type="text" class="form-control" id="taskHeader" placeholder="Enter Task Header" />
+                </div>
+                <div class="form-group">
+                    <label for="taskContent">Task Content</label>
+                    <input name="taskContext" type="text" class="form-control" id="taskContent" placeholder="Enter Task Content" />
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using System.Collections
+@using System.Net
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.CodeAnalysis.Differencing
+@using Newtonsoft.Json
+@inject IAuthorizationService AuthorizationService
+
+
+
+@if (User.Identity.IsAuthenticated){
+
+    <div id="partialView" xmlns="http://www.w3.org/1999/html"></div>
+    <div class="text-center">
+        <p id="task-header">List of available tasks</p><br />
+        <button type="button" class="btn btn-primary" onclick="addTaskButton()">Add Task</button>
+    </div>
+
+
+
+    <div class="todo-container">
+
+
+        @{
+            string todoListJson;
+            using (var client = new WebClient())
+            { 
+                todoListJson = new WebClient().DownloadString("https://localhost:5001/api/todo/all");
+            }
+
+            var todoList = JsonConvert.DeserializeObject<List<TodoModel>>(todoListJson);
+        }
+        @foreach (var todoElement in todoList)
+        {
+            <li class="todo-object">
+                <div class=todo-object-header>
+                    @todoElement.TaskHeader
+                </div>
+                <div class="todo-object-content">
+                    @todoElement.TaskContent
+                </div>
+
+
+                <div class="todo-object-button-section">
+                    <button type="button" class="btn btn-warning" onclick="editTaskButton(@todoElement.Id)">Edit</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteTaskButton(@todoElement.Id)">Delete</button>
+                </div>
+                <div class="todo-object-task-number-section">
+                    @todoElement.Id
+                </div>
+            </li>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <div>Log in to see content</div>
+    </div>
+}
