@@ -5,28 +5,32 @@
     ViewBag.Title = "title";
 }
 
-<script>
-    window.onclick = function (ev) {
-        if(ev.target === $('#popout-background')[0])
-            closePopoutWindow();
-    }
-</script>
+@if (User.Identity.IsAuthenticated)
+{
 
-<div id="popout-background">
-    <div id="popout-content">
-        <span class="close" onclick="closePopoutWindow()">&times;</span>
-        <div class="popout-content-data">
-            <form id="formToSend" onsubmit="return SendForm({id: @Model.Id, userId:  '@User.FindFirstValue(ClaimTypes.NameIdentifier)'})">
-                <div class="form-group">
-                    <label for="taskHeader">Task Header</label>
-                    <input name="taskHeader" type="text" class="form-control" id="TaskHeader" placeholder="Enter Task Header" value="@Model.TaskHeader" />
-                </div>
-                <div class="form-group">
-                    <label for="taskContent">Task Content</label>
-                    <input name="taskContent" type="text" class="form-control" id="TaskContent" placeholder="Enter Task Content" value="@Model.TaskContent" />
-                </div>
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
+    <script>
+        window.onclick = function(ev) {
+            if (ev.target === $('#popout-background')[0])
+                closePopoutWindow();
+        }
+    </script>
+
+    <div id="popout-background">
+        <div id="popout-content">
+            <span class="close" onclick="closePopoutWindow()">&times;</span>
+            <div class="popout-content-data">
+                <form id="formToSend" onsubmit="return SendForm({ id: @Model.Id, userId: '@User.FindFirstValue(ClaimTypes.NameIdentifier)' })">
+                    <div class="form-group">
+                        <label for="taskHeader">Task Header</label>
+                        <input name="taskHeader" type="text" class="form-control" id="TaskHeader" placeholder="Enter Task Header" value="@Model.TaskHeader"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskContent">Task Content</label>
+                        <input name="taskContent" type="text" class="form-control" id="TaskContent" placeholder="Enter Task Content" value="@Model.TaskContent"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+}

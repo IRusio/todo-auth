@@ -1,4 +1,6 @@
-﻿namespace Todo.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Todo.Models
 {
     public class PreTodoModel
     {
@@ -12,6 +14,7 @@
         {
         }
 
+        [Required]
         public string TaskHeader { get; set; }
         public string TaskContent { get; set; }
     }
